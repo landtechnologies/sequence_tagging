@@ -1,0 +1,23 @@
+{
+  "rules": {
+      "quotes": 0,
+      "camelcase": 0,
+      "no-underscore-dangle": 0,
+      "no-shadow": 2,
+      "no-unused-vars": 1,
+      "no-console": 1,
+      "no-mixed-requires": 0,
+      "eqeqeq": 0,
+      "indent": [0, 2],
+      "linebreak-style": [2, "unix"],
+      "semi": [2, "always"]
+  },
+  "ecmaFeatures": { 
+      "modules": true 
+  },
+  "env": {
+      "es6": true,
+      "node": true
+  },
+  "extends": "eslint:recommended"
+}

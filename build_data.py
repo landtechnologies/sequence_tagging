@@ -33,8 +33,8 @@ def main():
     vocab_glove = get_glove_vocab(config.filename_glove)
 
     vocab = vocab_words & vocab_glove
-    vocab.add(UNK)
     vocab.add(NUM)
+    vocab.add(UNK)
 
     # Save vocab
     write_vocab(vocab, config.filename_words)

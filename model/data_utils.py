@@ -73,10 +73,10 @@ class CoNLLDataset(object):
                 else:
                     ls = line.split(' ')
                     word, tag = ls[0],ls[-1]
-                    if self.processing_word is not None:
-                        word = self.processing_word(word)
-                    if self.processing_tag is not None:
-                        tag = self.processing_tag(tag)
+                    # if self.processing_word is not None:
+                    #     word = self.processing_word(word)
+                    # if self.processing_tag is not None:
+                    #     tag = self.processing_tag(tag)
                     words += [word]
                     tags += [tag]
 
@@ -271,6 +271,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                 if allow_unk:
                     word = vocab_words[UNK]
                 else:
+                    print word
                     raise Exception("Unknow key is not allowed. Check that "\
                                     "your vocab (tags?) is correct")
 

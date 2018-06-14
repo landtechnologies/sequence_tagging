@@ -4,3 +4,5 @@
 !/data/.gitkeep
 /results
 *.DS_Store
+bin
+lib
