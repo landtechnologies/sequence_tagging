@@ -24,9 +24,9 @@ def main():
     processing_word = get_processing_word(lowercase=True)
 
     # Generators
-    dev   = CoNLLDataset(config.filename_dev, processing_word)
-    test  = CoNLLDataset(config.filename_test, processing_word)
-    train = CoNLLDataset(config.filename_train, processing_word)
+    dev   = CoNLLDataset(config.filename_dev, processing_word=processing_word)
+    test  = CoNLLDataset(config.filename_test, processing_word=processing_word)
+    train = CoNLLDataset(config.filename_train, processing_word=processing_word)
 
     # Build Word and Tag vocab
     vocab_words, vocab_tags = get_vocabs([train, dev, test])

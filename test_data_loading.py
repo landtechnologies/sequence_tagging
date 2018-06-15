@@ -160,10 +160,8 @@ def main():
   # build model
   model = NERModel(config)
   model.build()
-  dev   = CoNLLDataset(config.filename_dev, config.processing_word,
-                        config.processing_tag, config.max_iter)
-  train = CoNLLDataset(config.filename_train, config.processing_word,
-                        config.processing_tag, config.max_iter)
+  dev   = CoNLLDataset(config.filename_dev, max_iter=config.max_iter)
+  train = CoNLLDataset(config.filename_train, max_iter=config.max_iter)
 
   batch_size = model.config.batch_size
 

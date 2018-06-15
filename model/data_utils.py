@@ -40,8 +40,7 @@ class CoNLLDataset(object):
         ```
 
     """
-    def __init__(self, filename, processing_word=None, processing_tag=None,
-                 max_iter=None):
+    def __init__(self, filename, max_iter=None, processing_word=None, processing_tag=None):
         """
         Args:
             filename: path to the file
@@ -73,6 +72,10 @@ class CoNLLDataset(object):
                 else:
                     ls = line.split(' ')
                     word, tag = ls[0],ls[-1]
+                    if self.processing_word is not None:
+                        word = self.processing_word(word)
+                    if self.processing_tag is not None:
+                        tag = self.processing_tag(tag)
                     words += [word]
                     tags += [tag]
 
