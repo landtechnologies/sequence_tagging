@@ -387,7 +387,12 @@ class NERModel(BaseModel):
         """
         fd = self.get_feed_dict(words, labels=labels, dropout=1.0)
 
+        if self.config.use_crf:
+            # get tag scores and transition params of CRF
+            viterbi_sequences = []
+
             logits, trans_params, seq_lens, label_ids = self.sess.run(
+                [self.logits, self.trans_params, self.sequence_lengths, self.labels], feed_dict=fd)
 
             # iterate over the sentences because no batching in vitervi_decode
             for logit, sequence_length in zip(logits, seq_lens):
