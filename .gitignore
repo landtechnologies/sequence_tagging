@@ -4,3 +4,7 @@
 !/data/.gitkeep
 /results
 *.DS_Store
+bin
+lib
+include
+landtech/node_modules/
