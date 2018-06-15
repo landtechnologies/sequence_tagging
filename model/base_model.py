@@ -63,6 +63,7 @@ class BaseModel(object):
         self.logger.info("Initializing tf session")
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
+        self.sess.run(tf.tables_initializer())
         self.saver = tf.train.Saver()
 
 
