@@ -1,4 +1,4 @@
-from model.data_utils import CoNLLDataset
+from model.data_utils import CoNLLDataset, minibatches
 from model.ner_model import NERModel
 from model.config import Config
 import tensorflow as tf
@@ -154,27 +154,62 @@ def main():
   char_mask = tf.sequence_mask(word_lengths)
   char_ids = tf.where(char_mask, char_ids, tf.zeros_like(char_ids))
 
-  ucons = tf.constant_initializer([chr(i) for i in range(65, 91)])
-  lcons = tf.constant_initializer([chr(i) for i in range(97, 123)])
 
-  upchars = tf.constant([chr(i) for i in range(65, 91)], dtype=tf.string)
-  lchars = tf.constant([chr(i) for i in range(97, 123)], dtype=tf.string)
+  config = Config()
 
-  upcharslut = tf.contrib.lookup.index_table_from_tensor(mapping=upchars, num_oov_buckets=1, default_value=-1)
+  # build model
+  model = NERModel(config)
+  model.build()
+  dev   = CoNLLDataset(config.filename_dev, config.processing_word,
+                        config.processing_tag, config.max_iter)
+  train = CoNLLDataset(config.filename_train, config.processing_word,
+                        config.processing_tag, config.max_iter)
+
+  batch_size = model.config.batch_size
+
+  # iterate over dataset
+  for i, (words, labels) in enumerate(minibatches(train, batch_size)):
+    print "Start"
+
+    fd, _ = model.get_feed_dict(words, labels, model.config.lr,
+            model.config.dropout)
+
+    _, train_loss = model.sess.run(
+            [model.train_op, model.loss], feed_dict=fd)
+
+    print "train loss", train_loss
+
+    metrics = model.run_evaluate(dev)
+    msg = " - ".join(["{} {:04.2f}".format(k, v)
+            for k, v in metrics.items()])
+    print msg
+
+  # model.restore_session(config.dir_model)
+
+  # words_raw = "My name is Sam"
+  # fd = model.get_feed_dict([words_raw], dropout=1.0)
+
+  # word_ids, sequence_lengths, char_ids, word_lengths = model.sess.run(
+  #     [model.word_ids, model.sequence_lengths, model.char_ids, model.word_lengths], feed_dict=fd)
+  
+  # print word_ids
+  # print sequence_lengths
+  # print char_ids
+  # print word_lengths
   
 
-  with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
+  # with tf.Session() as sess:
+  #   sess.run(tf.global_variables_initializer())
 
-    tf.tables_initializer().run()
+  #   tf.tables_initializer().run()
 
-    # print char_ids.eval()
-    # print removed_char_sentences.eval()
-    # print chars.eval()
-    # print char_ids.eval()
+  #   # print char_ids.eval()
+  #   # print removed_char_sentences.eval()
+  #   # print chars.eval()
+  #   # print char_ids.eval()
 
-    idxes = [1, 0, 2]
-    print tf.gather_nd(['a', 'b', 'c'], tf.expand_dims(idxes, 1)).eval()
+  #   idxes = [1, 0, 2]
+  #   print tf.gather_nd(['a', 'b', 'c'], tf.expand_dims(idxes, 1)).eval()
 
     # s = sentences
 

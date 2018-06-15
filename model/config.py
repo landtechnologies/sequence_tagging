@@ -81,7 +81,7 @@ class Config():
     filename_test = "data/full_text.small.test.txt"
     filename_train = "data/full_text.small.train.txt"
 
-#     filename_dev = filename_test = filename_train = "data/test.txt" # test
+    # filename_dev = filename_test = filename_train = "data/test.txt" # test
 
     max_iter = None # if not None, max number of examples in Dataset
 
@@ -107,3 +107,4 @@ class Config():
 
     # NOTE: if both chars and crf, only 1.6x slower on GPU
     use_chars = True # if char embedding, training is 3.5x slower on CPU
+    use_crf = True
