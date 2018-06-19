@@ -21,4 +21,4 @@ if len(args.sentence):
     appendText += '\n'
     toAppendTo.write(appendText)
 else:
-  print "No sentence, doing nothing"
+  print("No sentence, doing nothing")
