@@ -71,15 +71,15 @@ class Config():
     use_pretrained = True
 
     # dataset
-#     filename_dev = "data/policy.dev.txt"
-#     filename_test = "data/policy.test.txt"
-#     filename_train = "data/policy.train.txt"
+    filename_dev = "data/policy.dev.txt"
+    filename_test = "data/policy.test.txt"
+    filename_train = "data/policy.train.txt"
     # filename_dev = "data/full_text.dev.txt"
     # filename_test = "data/full_text.test.txt"
     # filename_train = "data/full_text.train.txt"
-    filename_dev = "data/full_text.small.dev.txt"
-    filename_test = "data/full_text.small.test.txt"
-    filename_train = "data/full_text.small.train.txt"
+    # filename_dev = "data/full_text.small.dev.txt"
+    # filename_test = "data/full_text.small.test.txt"
+    # filename_train = "data/full_text.small.train.txt"
 
     # filename_dev = filename_test = filename_train = "data/test.txt" # test
 

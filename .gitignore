@@ -6,5 +6,6 @@
 *.DS_Store
 bin
 lib
+exported
 include
 landtech/node_modules/

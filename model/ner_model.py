@@ -70,18 +70,20 @@ class NERModel(BaseModel):
         super(NERModel, self).__init__(config)
         self.idx_to_tag = {idx: tag for tag, idx in
                            self.config.vocab_tags.items()}
+        self.output_name = "label_code_preds"
+        self.input_name = "padded_sentences"
 
 
     def add_placeholders(self):
         """Define placeholders = entries to computational graph"""
 
         self.padded_sentences = tf.placeholder(tf.string, shape=[None, None],
-                        name="padded_sentences")
+                        name=self.input_name)
         self.label_codes = tf.placeholder(tf.string, shape=[None, None],
                         name="label_codes")
 
         # hyper parameters
-        self.dropout = tf.placeholder(dtype=tf.float32, shape=[],
+        self.dropout = tf.placeholder_with_default(1.0, shape=[],
                         name="dropout")
         self.lr = tf.placeholder(dtype=tf.float32, shape=[],
                         name="lr")
@@ -226,12 +228,15 @@ class NERModel(BaseModel):
         with open(self.config.filename_tags) as f:
             labels = [label.strip() for idx, label in enumerate(f)]
 
+        with open(self.config.filename_chars) as f:
+            chars = [char.strip() for idx, char in enumerate(f)]
+
         self.label_list = tf.constant(labels)
 
         self.word_table = lookup.index_table_from_tensor(
             mapping=words, default_value=words.index(UNK))
-        self.char_table = lookup.index_table_from_file(
-            vocabulary_file=self.config.filename_chars, default_value=-1)
+        self.char_table = lookup.index_table_from_tensor(
+            mapping=chars, default_value=-1)
         self.label_table = lookup.index_table_from_tensor(
             mapping=self.label_list, num_oov_buckets=1)
 
@@ -287,7 +292,7 @@ class NERModel(BaseModel):
 
     def add_pred(self):
         self.label_pred_ids = tf.cast(tf.argmax(self.logits, axis=-1), tf.int32)
-        self.label_code_preds = tf.gather_nd(self.label_list, tf.expand_dims(self.label_pred_ids, 2))
+        self.label_code_preds = tf.gather_nd(self.label_list, tf.expand_dims(self.label_pred_ids, 2), name=self.output_name)
 
     def build(self):
         # NER specific functions
