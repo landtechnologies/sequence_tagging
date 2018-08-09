@@ -5,6 +5,12 @@ RUN apt-get update && apt-get install -y curl libcurl3 libcurl3-dev \
     && curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | apt-key add - \
     && apt-get update && apt-get install tensorflow-model-server
 
-ENTRYPOINT ["tensorflow_model_server"]
+RUN apt-get update && apt-get install -y python-pip
 
-CMD ["/bin/bash"]
+RUN pip install --upgrade pip
+
+RUN pip install awscli --upgrade
+
+COPY *.sh ./
+
+CMD ["./run_server.sh"]

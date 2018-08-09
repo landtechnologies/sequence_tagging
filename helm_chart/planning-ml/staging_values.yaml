@@ -1,0 +1,32 @@
+service:
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: planning-ml.k8-staging.landinsight.io
+    service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-73a11e0f"
+
+resources:
+  requests:
+    memory: "1000Mi"
+    cpu: "400m"
+
+podDisruptionBudget: |
+  minAvailable: 1
+
+minPodReplicaCount: 2
+
+# volumes:
+#   - name: goofys-s3
+#     flexVolume:
+#       driver: "informaticslab/goofys-flex-volume"
+#       options:
+#         # Required
+#         bucket: "landtech-ml-models-staging"
+#         # Optional
+#         subPath: "landtech_policy_tagging"
+#         dirMode: "0755"
+#         fileMode: "0644"
+#         awsKey: AKIAIFGBF6KQFBDO2D2A
+#         awsSecret: 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
+#   - name: models-storage
+#     hostPath:
+#       path: /mnt/goofys/landtech-ml-models-staging/landtech_policy_tagging
+#       type: Directory

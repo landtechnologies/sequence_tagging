@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "helm.fullname" . }}
+  labels:
+    app: {{ template "helm.name" . }}
+    chart: {{ template "helm.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "helm.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "helm.name" . }}
+        release: {{ .Release.Name }}
+    {{- if .Values.pod.annotations }}
+      annotations:
+{{ toYaml .Values.pod.annotations | indent 8 }}
+    {{- end }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # command:
+          #   - /bin/sh
+          #   - -c
+          # args:
+          #   - tensorflow_model_server --port=9000 --model_name=landtech_policy_tagging --model_base_path={{ .Values.volumeMountPath }}
+          ports:
+            - name: ml-server
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: ml-server
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: ml-server
+          #   initialDelaySeconds: 120
+          #   periodSeconds: 20
+          #   failureThreshold: 5
+          #   timeoutSeconds: 120
+          volumeMounts:
+            - name: models-storage
+              mountPath: {{ .Values.model.path }}
+          env:
+            - name: MODEL_PATH
+              value: {{ .Values.model.path | quote }}
+            - name: MODEL_S3_BUCKET
+              value: {{ .Values.s3.bucket | quote }}
+            - name: MODEL_S3_PATH
+              value: {{ .Values.s3.prefix | quote }}
+            - name: SERVER_PORT
+              value: {{ .Values.service.port | quote }}
+            - name: MODEL_NAME
+              value: {{ .Values.model.name | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.aws.key | quote }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.aws.secret | quote }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- if .Values.volumes }}
+      volumes:
+{{ toYaml .Values.volumes | indent 8 }}
+    {{- end }}

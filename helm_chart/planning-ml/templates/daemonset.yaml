@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "helm.fullname" . }}
+  labels:
+    app: {{ template "helm.name" . }}
+    chart: {{ template "helm.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "helm.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      initContainers:
+        - name: {{ .Chart.Name }}-models-init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: models-storage
+              mountPath: {{ .Values.model.path }}
+          command:
+            - ./download_model.sh
+          env:
+            - name: MODEL_PATH
+              value: {{ .Values.model.path | quote }}
+            - name: MODEL_S3_BUCKET
+              value: {{ .Values.s3.bucket | quote }}
+            - name: MODEL_S3_PATH
+              value: {{ .Values.s3.prefix | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.aws.key | quote }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.aws.secret | quote }}
+      containers:
+        - name: {{ .Chart.Name }}-models-sync
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: models-storage
+              mountPath: {{ .Values.model.path }}
+          command:
+            - "./sync_model.sh"
+          env:
+            - name: MODEL_PATH
+              value: {{ .Values.model.path | quote }}
+            - name: MODEL_S3_BUCKET
+              value: {{ .Values.s3.bucket | quote }}
+            - name: MODEL_S3_PATH
+              value: {{ .Values.s3.prefix | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.aws.key | quote }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.aws.secret | quote }}
+            - name: SLEEP_DURATION
+              value: {{ .Values.modelsPollSleepDuration | quote }}
+    {{- if .Values.volumes }}
+      volumes:
+{{ toYaml .Values.volumes | indent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

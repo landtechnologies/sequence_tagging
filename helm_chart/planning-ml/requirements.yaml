@@ -1,0 +1,7 @@
+# Couldn't get mount to s3 working. 
+# May not be the best way anyway
+# Possibly better to poll for updates and then download them in seperate script
+dependencies: []
+  # - name: s3-fuse-flex-volume
+  #   version: 1.1.0
+  #   repository: s3://landtech-helm-charts

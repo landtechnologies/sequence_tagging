@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "helm.fullname" . }}
+  labels:
+    app: {{ template "helm.name" . }}
+    chart: {{ template "helm.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+  selector:
+    app: {{ template "helm.name" . }}
+    release: {{ .Release.Name }}
+  externalTrafficPolicy: Local
+{{- if .Values.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{ toYaml .Values.loadBalancerSourceRanges | indent 4 }}
+{{- end }}
