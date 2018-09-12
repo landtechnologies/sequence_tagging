@@ -2,8 +2,8 @@ maxPodReplicaCount: 20
 
 service:
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: planning-ml.k8-prod.landinsight.io
     service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-0d69fa71"
+  subdomain: k8-prod
 
 s3:
   bucket: landtech-ml-models

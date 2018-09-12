@@ -13,8 +13,9 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "helm.name" . }}
+        app: {{ template "helm.name" . }}-daemonset-pod
         release: {{ .Release.Name }}
+        role: model-sync
     spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}

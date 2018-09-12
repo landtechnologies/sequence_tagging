@@ -1,7 +1,7 @@
 service:
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: planning-ml.k8-staging.landinsight.io
     service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-73a11e0f"
+  subdomain: k8-staging
 
 resources:
   requests:
@@ -11,4 +11,4 @@ resources:
 podDisruptionBudget: |
   minAvailable: 1
 
-minPodReplicaCount: 2
+minPodReplicaCount: 1

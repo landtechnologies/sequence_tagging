@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ template "helm.fullname" . }}
   labels:
-    app: {{ template "helm.name" . }}
+    app: {{ template "helm.name" . }}-deployment-pod
     chart: {{ template "helm.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -13,11 +13,13 @@ spec:
     matchLabels:
       app: {{ template "helm.name" . }}
       release: {{ .Release.Name }}
+      role: ml-server
   template:
     metadata:
       labels:
         app: {{ template "helm.name" . }}
         release: {{ .Release.Name }}
+        role: ml-server
     {{- if .Values.pod.annotations }}
       annotations:
 {{ toYaml .Values.pod.annotations | indent 8 }}
