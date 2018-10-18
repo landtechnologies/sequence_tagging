@@ -8,3 +8,5 @@ lib
 exported
 include
 landtech/node_modules/
+
+helm_chart/planning-ml/aws_values.yaml
